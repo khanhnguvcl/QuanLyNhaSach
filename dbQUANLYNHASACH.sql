@@ -1,0 +1,99 @@
+create database dbQUANLYNHASACH
+go
+use dbQUANLYNHASACH
+go
+
+
+CREATE TABLE THELOAI (
+    IDTheLoai VARCHAR(10) PRIMARY KEY,
+    TenTheLoai NVARCHAR(100)
+);
+
+CREATE TABLE SACH (
+    IDSach VARCHAR(10) PRIMARY KEY,
+    TenSach NVARCHAR(100),
+    TacGia NVARCHAR(100),
+    IDTheLoai VARCHAR(10),
+    NhaXuatBan NVARCHAR(100),
+    NamXuatBan INT,
+    GiaNhap DECIMAL(18, 0),
+    GiaBan DECIMAL(18, 0),
+    SoLuongTon INT,
+    FOREIGN KEY (IDTheLoai) REFERENCES THELOAI(IDTheLoai)
+);
+
+
+CREATE TABLE NHANVIEN (
+    IDNhanVien VARCHAR(10) PRIMARY KEY,
+    HoTen NVARCHAR(100),
+    SoDienThoai VARCHAR(10),
+    TaiKhoan VARCHAR(20) UNIQUE,
+    MatKhau VARCHAR(50),
+);
+
+CREATE TABLE KHACHHANG (
+    IDKhachHang VARCHAR(10) PRIMARY KEY,
+    HoTen NVARCHAR(100),
+    DiaChi NVARCHAR(100),
+    SoDienThoai VARCHAR(10),
+    Email VARCHAR(100)
+);
+
+
+CREATE TABLE NHACUNGCAP (
+    IDNhaCungCap VARCHAR(10) PRIMARY KEY,
+    TenNhaCungCap NVARCHAR(100),
+    DiaChi VARCHAR(100),
+    SoDienThoai VARCHAR(10),
+    Email VARCHAR(100)
+);
+ALTER TABLE NHACUNGCAP
+ALTER COLUMN DiaChi NVARCHAR(100);
+
+CREATE TABLE HOADON (
+    IDHoaDon VARCHAR(10) PRIMARY KEY,
+    NgayLapHD DATETIME,
+    IDKhachHang VARCHAR(10),
+    IDNhanVien VARCHAR(10),
+    TongTien DECIMAL(18, 0),
+    FOREIGN KEY (IDKhachHang) REFERENCES KHACHHANG(IDKhachHang),
+    FOREIGN KEY (IDNhanVien) REFERENCES NHANVIEN(IDNhanVien)
+);
+
+
+CREATE TABLE CHITIETHOADON (
+    IDHoaDon VARCHAR(10),
+    IDSach VARCHAR(10),
+    SoLuong INT,
+    DonGia DECIMAL(18, 0),
+    ThanhTien  AS (SoLuong * DonGia) PERSISTED,
+    PRIMARY KEY (IDHoaDon, IDSach),
+    FOREIGN KEY (IDHoaDon) REFERENCES HOADON(IDHoaDon),
+    FOREIGN KEY (IDSach) REFERENCES SACH(IDSach)
+);
+
+
+CREATE TABLE PHIEUNHAP (
+    IDPhieuNhap VARCHAR(10) PRIMARY KEY,
+    NgayNhap DATETIME ,
+    IDNhaCungCap VARCHAR(10),
+    IDNhanVien VARCHAR(10),
+    TongTienNhap DECIMAL(18, 0),
+    FOREIGN KEY (IDNhaCungCap) REFERENCES NHACUNGCAP(IDNhaCungCap),
+    FOREIGN KEY (IDNhanVien) REFERENCES NHANVIEN(IDNhanVien)
+);
+
+
+CREATE TABLE CHITIETPHIEUNHAP (
+    IDPhieuNhap VARCHAR(10),
+    IDSach VARCHAR(10),
+    SoLuongNhap INT,
+    DonGiaNhap DECIMAL(18, 0),
+    ThanhTienNhap AS (SoLuongNhap * DonGiaNhap) PERSISTED,
+    PRIMARY KEY (IDPhieuNhap, IDSach),
+    FOREIGN KEY (IDPhieuNhap) REFERENCES PHIEUNHAP(IDPhieuNhap),
+    FOREIGN KEY (IDSach) REFERENCES SACH(IDSach)
+);
+
+select * from NHANVIEN
+select * from THELOAI
